@@ -109,7 +109,7 @@ var mineSweepingMap = function (r, c, num) {
 // 2，将雷写入页面
 var writeHtml = function (map) {
     // 先通过 y轴数量写入 ul，然后通过 x轴上的数量写入 li
-    var x = document.querySelector('.gameBox')
+    var x = document.querySelector('.gameBox')  
     for (var i = 0; i < map.length; i++) {
         x.innerHTML = x.innerHTML + `<ul class="row x-${i}" data-x="${i}"></ul>`
     }
@@ -130,27 +130,28 @@ var writeHtml = function (map) {
     }
 }
 
-// 判断是否胜利
+// 判断是否胜利yi，clearMineNum表示已经扫出的格子数量
 var changeClearMineNum = function (clearMineNum) {
     // console.log('zmzmzmzm');
     // console.log('zz', zz);
-    if (clearMineNum === ((col * row) - num)) {
+    if (clearMineNum === ((col * row) - num)) {     // 如果已经扫出的格子数量等于格子总数减去雷的数量
         var all = document.querySelectorAll('.col')
         var allNum = 0
         var stop = setInterval(function () {
+            // r,g,b表示随机不同的颜色
             var r = Math.floor(Math.random() * 256)
             var g = Math.floor(Math.random() * 256)
             var b = 210
             // var b = Math.floor(Math.random() * 256)
             all[allNum].children[0].style.opacity = `0`
             all[allNum].children[1].style.opacity = '0'
-            all[allNum].style.background = `rgba(${r},${g},${b},0.6)`
-            allNum++
+            all[allNum].style.background = `rgba(${r},${g},${b},0.6)`    // 给每一个格子加上不同的颜色
+            allNum++    // 循环变量，循环每一个格子
             if (allNum === all.length) {
                 clearInterval(stop)
                 if (zz === 0) {     // zz表示是否已经点到地雷
                     alert('你成功啦~！！晚上吃肉~~！')
-                    initializeGame(row, col, num)
+                    initializeGame(row, col, num)   // 初始化游戏
                 }
                 initializeGame(row, col, num)
             }
@@ -158,10 +159,11 @@ var changeClearMineNum = function (clearMineNum) {
     }
 }
 
-// 3，扫雷过程
+// 3，扫雷过程  row和col是地图的长宽，num是此地图地雷的数量
 var clearMine = function (row, col, num) {
-    var clearMineNum = 0
-    var makeWhite = function (x, y) {
+    var clearMineNum = 0    // 已经扫出的格子数量
+
+    var makeWhite = function (x, y) {   // 点开方格函数，x,y为点击的方格的坐标
         if (x < row && y < col && x >= 0 && y >= 0) {
             var el = document.querySelector(`.x-${x}`).children[y]
             // 需要注意这个 ！== 'white' ，如果不加这个就会进入无限循环
@@ -171,14 +173,14 @@ var clearMine = function (row, col, num) {
                 el.children[1].classList.add('hide')
                 clearMineNum++
                 // console.log(clearMineNum, 'clearMineNum');
-                changeClearMineNum(clearMineNum)
-                if (el.innerText === '') {
+                changeClearMineNum(clearMineNum)    // 判断是否胜利
+                if (el.innerText === '') {  // 如果点击的是个没有数字的空方格，就将周围的空方格都点开
                     showNoMine(x, y)
                 }
             }
         }
     }
-    // 智能扫雷
+    // 智能扫雷，如果点击的方格是空的，x,y为此放个的坐标，就将此方格周围的空方格都点开
     var showNoMine = function (x, y) {
         // console.log(x, y, 'x,y');
         makeWhite(x - 1, y + 1)
@@ -194,7 +196,7 @@ var clearMine = function (row, col, num) {
     // 给所有方块绑定点击事件，点击显示数字，或者 boom
     var show = function () {
         // var x = document.querySelectorAll('.col')
-        var x = document.querySelectorAll('.row')
+        var x = document.querySelectorAll('.row')   // 获取所有的ul
         for (var i = 0; i < x.length; i++) {
             x[i].addEventListener('click', function (event) {
                 var el = event.target
@@ -206,14 +208,13 @@ var clearMine = function (row, col, num) {
                 }
                 // 已经被标记的不能点击
                 var flag = el.children[1].classList.contains('hide')
-                if (el.tagName === 'LI' && flag) {
-                    if (el.children[0].innerText !== '9' && el.style.background !== 'white') {
+                if (el.tagName === 'LI' && flag) {  // 没有被标记
+                    if (el.children[0].innerText !== '9' && el.style.background !== 'white') {  // 不是雷而且没有被扫
                         el.children[0].style.opacity = '1'
                         el.style.background = 'white'
-                        clearMineNum++
-                        changeClearMineNum(clearMineNum)
-                        // console.log(clearMineNum, 'clearMineNum');
-                    } else if (el.children[0].innerText === '9') {
+                        clearMineNum++  // 已经清理的雷的数量加1
+                        changeClearMineNum(clearMineNum)    // 判断是否胜利
+                    } else if (el.children[0].innerText === '9') {  // 如果点击的是雷
                         // el.children[0].style.opacity = '1'
                         zz = 1
                         el.classList.add('boom')
@@ -223,7 +224,7 @@ var clearMine = function (row, col, num) {
                         var allNum = 0
                         // 这里做了个小动画，失败的时候慢慢的显示雷的位置
                         for (var i = 0; i < all.length; i++) {
-                            if (all[i].children[0].innerText === '9') {
+                            if (all[i].children[0].innerText === '9') {     // 如果此处是雷
                                 // all[i].style.background = 'red'
                                 ff[allNum] = all[i]
                                 allNum++
@@ -237,7 +238,7 @@ var clearMine = function (row, col, num) {
                             time = 25
                         }
                         var stop = setInterval(function () {
-                            ff[allNum].classList.add('boom')
+                            ff[allNum].classList.add('boom')    // 将雷显示出来
                             allNum++
                             if (allNum === ff.length) {
                                 clearInterval(stop)
@@ -262,10 +263,11 @@ var clearMine = function (row, col, num) {
                 }
             })
         }
+        // 右键点击标记
         for (var i = 0; i < x.length; i++) {
             var mineNum = num
-            x[i].addEventListener('contextmenu', function (event) {
-                event.preventDefault();
+            x[i].addEventListener('contextmenu', function (event) {     // 绑定鼠标右键事件
+                event.preventDefault();     // 阻止默认行为
                 var btnNum = event.button
                 var el = event.target
                 if (el.tagName != 'LI') {
