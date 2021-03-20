@@ -57,7 +57,7 @@ var mineSweepingMap = function (r, c, num) {
         column(col)
     }
 
-    // 给出地雷数量让后随机写入地雷
+    // 给出地雷数量然后随机写入地雷
     var writeInMine = function (num) {
         // 随机位置写入
         var randomLocation = function () {
@@ -148,7 +148,7 @@ var changeClearMineNum = function (clearMineNum) {
             allNum++
             if (allNum === all.length) {
                 clearInterval(stop)
-                if (zz === 0) {
+                if (zz === 0) {     // zz表示是否已经点到地雷
                     alert('你成功啦~！！晚上吃肉~~！')
                     initializeGame(row, col, num)
                 }
@@ -353,8 +353,8 @@ Btn()
 // zz 用来确定是否已经点到地雷
 var zz = 0
 var row = 16
-var col = 16
-var num = 40
+var col = 16    
+var num = 40    // 地雷的数量
 initializeGame(row, col, num)
 
 // 给一个坐标，把四周变成白色
